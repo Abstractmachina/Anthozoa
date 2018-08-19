@@ -59,13 +59,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\RDSolver3dComponent.cs" />
+    <Compile Include="Components\RDSolverSSComponent.cs" />
     <Compile Include="Components\RDFieldComponent.cs" />
     <Compile Include="Components\RDMesh2DComponent.cs" />
-    <Compile Include="RDSolver.cs" />
+    <Compile Include="RD2D.cs" />
     <Compile Include="Components\RDSolverComponent.cs" />
     <Compile Include="AnthozoaInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScrapBook.cs" />
+    <Compile Include="RD2DSS.cs" />
+    <Compile Include="RD3D.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

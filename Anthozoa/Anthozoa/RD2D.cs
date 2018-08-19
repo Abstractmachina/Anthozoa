@@ -10,7 +10,7 @@ namespace Anthozoa
 {
 
 
-    public class RDSolver2d
+    public class RD2D
     {
         //world holds no geometry. pure relative location + chemical ratio
         private CellGrid2d grid;
@@ -29,7 +29,7 @@ namespace Anthozoa
         public double Kill { get => kill; set => kill = value; }
 
 
-        internal RDSolver2d(int xRes_, int yRes_, double dA_, double dB_, double feed_, double kill_)
+        internal RD2D(int xRes_, int yRes_, double dA_, double dB_, double feed_, double kill_)
         {
             const string errorMessage = "The resolution of the grid must be at least 1 in each dimension.";
 

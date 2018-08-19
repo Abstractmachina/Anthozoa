@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-using SpatialSlur.SlurField;
+using System.Drawing;
 using SpatialSlur.SlurCore;
-
+using SpatialSlur.SlurField;
+using SpatialSlur.SlurRhino;
 
 namespace Anthozoa.Components
 {

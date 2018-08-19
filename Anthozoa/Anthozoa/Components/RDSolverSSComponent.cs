@@ -2,30 +2,19 @@
 using System.Collections.Generic;
 
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
+using SpatialSlur.SlurCore;
 
-// In order to load the result of this wizard, you will also need to
-// add the output bin/ folder of this project to the list of loaded
-// folder in Grasshopper.
-// You can use the _GrasshopperDeveloperSettings Rhino command for that.
-
-namespace Anthozoa
+namespace Anthozoa.Components
 {
-    public class RDSolverComponent : GH_Component
+    public class RDSolverSSComponent : GH_Component
     {
-
-
         /// <summary>
-        /// Each implementation of GH_Component must provide a public 
-        /// constructor without any arguments.
-        /// Category represents the Tab in which the component will appear, 
-        /// Subcategory the panel. If you use non-existing tab or panel names, 
-        /// new tabs/panels will automatically be created.
+        /// Initializes a new instance of the MyComponent1 class.
         /// </summary>
-        public RDSolverComponent()
-          : base("ReactionDiffusion 2D", "RD2D",
-              "Reaction-diffusion algorithm using the Gray-Scott Model",
+        public RDSolverSSComponent()
+          : base("SS ReactionDiffusion 2D", "RD2D",
+              "Reaction-diffusion algorithm using the Gray-Scott Model. Outputs SS Gridfield2d",
               "Anthozoa", "Main")
         {
         }
@@ -94,14 +83,14 @@ namespace Anthozoa
         bool reset, run;
         double speed;
 
-        RD2D rd = null;
+        RD2DSS rd;
         public static List<string> debugLog = new List<string>();
         public static int frameCount;
 
 
         public void Setup(int xRes_, int yRes_, double dA_, double dB_, double feed_, double kill_)
         {
-            rd = new RD2D(xRes_, yRes_, dA_, dB_, feed_, kill_);
+            rd = new RD2DSS(xRes_, yRes_, dA_, dB_, feed_, kill_);
             rd.Seed(50, 60, 50, 60);
             //Seed(20, 30, 60, 70);
             frameCount = 0;
@@ -114,9 +103,9 @@ namespace Anthozoa
             rd.Update();
             frameCount++;
             debugLog.Add(frameCount.ToString());
-            foreach (Cell c in rd.Grid.Cells)
+            foreach (Vec2d c in rd.Grid.Values)
             {
-                string s = String.Format("A: {0}; B: {1}", c.A, c.B);
+                string s = String.Format("A: {0}; B: {1}", c.X, c.Y);
                 debugLog.Add(s);
             }
         }
@@ -143,9 +132,12 @@ namespace Anthozoa
                 return null;
             }
         }
+        /// <summary>
+        /// Gets the unique ID for this component. Do not change this ID after release.
+        /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("080f7e50-9214-44c2-be63-e5ef8750bdcf"); }
+            get { return new Guid("428520aa-d44a-4377-aaf9-c807aa869ade"); }
         }
     }
 }

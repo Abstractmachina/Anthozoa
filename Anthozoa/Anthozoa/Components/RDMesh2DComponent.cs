@@ -86,9 +86,6 @@ namespace Anthozoa
 
             DA.SetDataList("debug", debugLog);
             DA.SetData("Mesh Output", m);
-
-
-
         }
 
         /// <summary>

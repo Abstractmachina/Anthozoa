@@ -2,30 +2,18 @@
 using System.Collections.Generic;
 
 using Grasshopper.Kernel;
-using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
-// In order to load the result of this wizard, you will also need to
-// add the output bin/ folder of this project to the list of loaded
-// folder in Grasshopper.
-// You can use the _GrasshopperDeveloperSettings Rhino command for that.
-
-namespace Anthozoa
+namespace Anthozoa.Components
 {
-    public class RDSolverComponent : GH_Component
+    public class RDSolver3dComponent : GH_Component
     {
-
-
         /// <summary>
-        /// Each implementation of GH_Component must provide a public 
-        /// constructor without any arguments.
-        /// Category represents the Tab in which the component will appear, 
-        /// Subcategory the panel. If you use non-existing tab or panel names, 
-        /// new tabs/panels will automatically be created.
+        /// Initializes a new instance of the RDSolver3dComponent class.
         /// </summary>
-        public RDSolverComponent()
-          : base("ReactionDiffusion 2D", "RD2D",
-              "Reaction-diffusion algorithm using the Gray-Scott Model",
+        public RDSolver3dComponent()
+          : base("RDSolver3d", "RD3D",
+              "Gray-Scott Diffusion Solver 3d",
               "Anthozoa", "Main")
         {
         }
@@ -41,6 +29,7 @@ namespace Anthozoa
             pManager.AddNumberParameter("Kill Rate", "K", "Rate of how fast A is killed.", GH_ParamAccess.item, 0.062d);
             pManager.AddNumberParameter("Grid Width", "X", "Resolution in X.", GH_ParamAccess.item, 100d);
             pManager.AddNumberParameter("Grid Depth", "Y", "Resolution in Y.", GH_ParamAccess.item, 100d);
+            pManager.AddNumberParameter("Grid Height", "Z", "Resolution in Z.", GH_ParamAccess.item, 100d);
 
         }
 
@@ -60,6 +49,7 @@ namespace Anthozoa
             {
                 double tempx = 0;
                 double tempy = 0;
+                double tempz = 0;
                 double dA = 0;
                 double dB = 0;
                 double kill = 0;
@@ -74,11 +64,13 @@ namespace Anthozoa
                 if (!DA.GetData("Kill Rate", ref kill)) return;
                 if (!DA.GetData("Grid Width", ref tempx)) return;
                 if (!DA.GetData("Grid Depth", ref tempy)) return;
+                if (!DA.GetData("Grid Height", ref tempz)) return;
 
                 int xRes = (int)tempx; //convert double into int
                 int yRes = (int)tempy;
+                int zRes = (int)tempz;
 
-                Setup(xRes, yRes, dA, dB, feed, kill);
+                Setup(xRes, yRes, zRes, dA, dB, feed, kill);
             }
 
             if (run)
@@ -94,16 +86,15 @@ namespace Anthozoa
         bool reset, run;
         double speed;
 
-        RD2D rd = null;
+        RD3D rd;
         public static List<string> debugLog = new List<string>();
         public static int frameCount;
 
 
-        public void Setup(int xRes_, int yRes_, double dA_, double dB_, double feed_, double kill_)
+        public void Setup(int xRes_, int yRes_, int zRes_, double dA_, double dB_, double feed_, double kill_)
         {
-            rd = new RD2D(xRes_, yRes_, dA_, dB_, feed_, kill_);
-            rd.Seed(50, 60, 50, 60);
-            //Seed(20, 30, 60, 70);
+            rd = new RD3D(xRes_, yRes_, zRes_, dA_, dB_, feed_, kill_);
+            rd.Seed(20, 30, 20, 30, 20, 30);
             frameCount = 0;
         }
 
@@ -114,9 +105,9 @@ namespace Anthozoa
             rd.Update();
             frameCount++;
             debugLog.Add(frameCount.ToString());
-            foreach (Cell c in rd.Grid.Cells)
+            foreach (Vector3d c in rd.Grid.Values)
             {
-                string s = String.Format("A: {0}; B: {1}", c.A, c.B);
+                string s = String.Format("A: {0}; B: {1}", c.X, c.Y);
                 debugLog.Add(s);
             }
         }
@@ -132,20 +123,25 @@ namespace Anthozoa
             ghDocument.ScheduleSolution((int)speed, new GH_Document.GH_ScheduleDelegate(this.ScheduleCallBack));
         }
 
-
-
+        /// <summary>
+        /// Provides an Icon for the component.
+        /// </summary>
         protected override System.Drawing.Bitmap Icon
         {
             get
             {
-                // You can add image files to your project resources and access them like this:
-                //return Resources.IconForThisComponent;
+                //You can add image files to your project resources and access them like this:
+                // return Resources.IconForThisComponent;
                 return null;
             }
         }
+
+        /// <summary>
+        /// Gets the unique ID for this component. Do not change this ID after release.
+        /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("080f7e50-9214-44c2-be63-e5ef8750bdcf"); }
+            get { return new Guid("269a21ac-4d6b-4afa-bcb7-a9b88a343d76"); }
         }
     }
 }
